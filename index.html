@@ -2,59 +2,41 @@
 <html>
 <head>
 
-<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>PRO Safari Minions</title>
+<title>ULTRA MINIONS</title>
 
 <style>
 
 body{
 
 margin:0;
-height:100vh;
-background:linear-gradient(#00c6ff,#0072ff);
-display:flex;
-justify-content:center;
-align-items:center;
-gap:40px;
 overflow:hidden;
+background:linear-gradient(#4facfe,#00f2fe);
+font-family:Arial;
+color:white;
 
--webkit-user-select:none;
-user-select:none;
+}
+
+#score{
+
+position:fixed;
+top:10px;
+left:10px;
+font-size:25px;
+font-weight:bold;
 
 }
 
 .minion{
 
-width:150px;
-height:240px;
+width:120px;
+height:200px;
 background:linear-gradient(#ffe259,#ffa751);
-border-radius:80px;
-position:relative;
-box-shadow:0 15px 30px rgba(0,0,0,0.3);
+border-radius:60px;
+position:absolute;
 
 transition:0.3s;
-
-}
-
-/* jump */
-
-.jump{
-
-transform:translateY(-60px);
-
-}
-
-/* strap */
-
-.strap{
-
-position:absolute;
-top:60px;
-width:100%;
-height:15px;
-background:black;
 
 }
 
@@ -62,61 +44,27 @@ background:black;
 
 .eye{
 
-position:absolute;
-top:35px;
-left:45px;
-
-width:60px;
-height:60px;
-
+width:50px;
+height:50px;
 background:white;
 border-radius:50%;
-border:6px solid gray;
-
+border:5px solid gray;
+position:absolute;
+top:30px;
+left:30px;
 overflow:hidden;
 
 }
 
-/* pupil */
-
 .pupil{
 
-position:absolute;
-
-width:20px;
-height:20px;
-
+width:15px;
+height:15px;
 background:black;
 border-radius:50%;
-
-left:20px;
-top:20px;
-
-transition:0.05s;
-
-}
-
-/* blink */
-
-.blink{
-
-height:5px !important;
-
-}
-
-/* mouth */
-
-.mouth{
-
 position:absolute;
-top:120px;
-left:40px;
-
-width:70px;
-height:30px;
-
-border-bottom:5px solid black;
-border-radius:50%;
+top:18px;
+left:18px;
 
 }
 
@@ -126,13 +74,28 @@ border-radius:50%;
 
 position:absolute;
 bottom:0;
-
 width:100%;
-height:80px;
-
+height:70px;
 background:#2b65ec;
+border-radius:0 0 60px 60px;
 
-border-radius:0 0 80px 80px;
+}
+
+/* banana */
+
+.banana{
+
+position:absolute;
+font-size:40px;
+cursor:pointer;
+
+}
+
+/* jump */
+
+.jump{
+
+transform:translateY(-50px);
 
 }
 
@@ -142,183 +105,180 @@ border-radius:0 0 80px 80px;
 
 <body>
 
-<div class="minion">
-<div class="strap"></div>
+<div id="score">Score: 0</div>
+
+<div class="minion" style="left:100px;top:300px">
 <div class="eye"><div class="pupil"></div></div>
-<div class="mouth"></div>
 <div class="pants"></div>
 </div>
 
-
-<div class="minion">
-<div class="strap"></div>
+<div class="minion" style="left:300px;top:300px">
 <div class="eye"><div class="pupil"></div></div>
-<div class="mouth"></div>
 <div class="pants"></div>
 </div>
-
 
 <script>
 
-/* SAFE EYE MOVEMENT */
+let score=0
 
-function moveEyes(x,y){
+/* banana spawn */
 
-document.querySelectorAll(".eye").forEach(eye=>{
+function spawnBanana(){
 
-let pupil = eye.querySelector(".pupil")
+let banana=document.createElement("div")
 
-let rect = eye.getBoundingClientRect()
+banana.innerHTML="🍌"
 
-let centerX = rect.width/2
-let centerY = rect.height/2
+banana.className="banana"
 
-let dx = x - rect.left - centerX
-let dy = y - rect.top - centerY
+banana.style.left=Math.random()*window.innerWidth+"px"
+banana.style.top="0px"
 
-let angle = Math.atan2(dy,dx)
+document.body.appendChild(banana)
 
-let radius = 10   /* LIMIT */
 
-let px = centerX + Math.cos(angle)*radius -10
-let py = centerY + Math.sin(angle)*radius -10
+let fall=setInterval(()=>{
 
-pupil.style.left = px+"px"
-pupil.style.top = py+"px"
+banana.style.top=
+
+banana.offsetTop+5+"px"
+
+
+/* catch */
+
+document.querySelectorAll(".minion").forEach(m=>{
+
+if(hit(banana,m)){
+
+score++
+
+document.getElementById("score").innerText="Score: "+score
+
+banana.remove()
+
+clearInterval(fall)
+
+}
 
 })
+
+},30)
+
+
+setTimeout(()=>{
+
+banana.remove()
+
+clearInterval(fall)
+
+},5000)
+
+}
+
+setInterval(spawnBanana,2000)
+
+
+/* collision */
+
+function hit(a,b){
+
+let ar=a.getBoundingClientRect()
+let br=b.getBoundingClientRect()
+
+return !(
+ar.right<br.left ||
+ar.left>br.right ||
+ar.bottom<br.top ||
+ar.top>br.bottom
+)
 
 }
 
 
-/* mouse */
+/* eye follow */
 
 document.addEventListener("mousemove", e=>{
 
-moveEyes(e.clientX,e.clientY)
+document.querySelectorAll(".eye").forEach(eye=>{
+
+let pupil=eye.querySelector(".pupil")
+
+let rect=eye.getBoundingClientRect()
+
+let dx=e.clientX-rect.left-25
+let dy=e.clientY-rect.top-25
+
+let angle=Math.atan2(dy,dx)
+
+let r=10
+
+pupil.style.left=25+Math.cos(angle)*r-7+"px"
+pupil.style.top=25+Math.sin(angle)*r-7+"px"
 
 })
-
-
-/* touch */
-
-document.addEventListener("touchmove", e=>{
-
-moveEyes(
-
-e.touches[0].clientX,
-
-e.touches[0].clientY
-
-)
 
 })
 
 
 /* jump */
 
-document.querySelectorAll(".minion").forEach(minion=>{
+document.querySelectorAll(".minion").forEach(m=>{
 
-minion.addEventListener("click", ()=>{
+m.onclick=()=>{
 
-minion.classList.add("jump")
+m.classList.add("jump")
 
 setTimeout(()=>{
 
-minion.classList.remove("jump")
+m.classList.remove("jump")
 
 },300)
 
-})
-
-})
-
-
-/* drag */
-
-let active=null
-
-document.addEventListener("touchstart", e=>{
-
-if(e.target.closest(".minion")){
-
-active=e.target.closest(".minion")
-
 }
 
 })
 
 
-document.addEventListener("touchmove", e=>{
-
-if(active){
-
-active.style.position="absolute"
-
-active.style.left=e.touches[0].clientX-75+"px"
-
-active.style.top=e.touches[0].clientY-120+"px"
-
-}
-
-})
-
-
-document.addEventListener("touchend", ()=>{
-
-active=null
-
-})
-
-
-/* blink */
+/* random walk */
 
 setInterval(()=>{
 
-document.querySelectorAll(".eye").forEach(eye=>{
+document.querySelectorAll(".minion").forEach(m=>{
 
-eye.classList.add("blink")
-
-setTimeout(()=>{
-
-eye.classList.remove("blink")
-
-},200)
+m.style.left=Math.random()*window.innerWidth+"px"
 
 })
 
 },3000)
 
 
+/* drag */
 
-/* change color double tap */
+let active=null
 
-document.querySelectorAll(".minion").forEach(minion=>{
+document.onmousedown=e=>{
 
-minion.addEventListener("dblclick", ()=>{
+if(e.target.closest(".minion"))
 
-let colors=[
+active=e.target.closest(".minion")
 
-"linear-gradient(red,yellow)",
+}
 
-"linear-gradient(green,yellow)",
+document.onmousemove=e=>{
 
-"linear-gradient(purple,pink)",
+if(active){
 
-"linear-gradient(cyan,blue)"
+active.style.left=e.clientX-60+"px"
+active.style.top=e.clientY-100+"px"
 
-]
+}
 
-minion.style.background=
+}
 
-colors[Math.floor(Math.random()*colors.length)]
+document.onmouseup=()=>active=null
 
-})
-
-})
 
 </script>
-
 
 </body>
 </html>
