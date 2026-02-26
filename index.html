@@ -2,41 +2,59 @@
 <html>
 <head>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ULTRA MINIONS</title>
+<title>PRO Safari Minions</title>
 
 <style>
 
 body{
 
 margin:0;
+height:100vh;
+background:linear-gradient(#00c6ff,#0072ff);
+display:flex;
+justify-content:center;
+align-items:center;
+gap:40px;
 overflow:hidden;
-background:linear-gradient(#4facfe,#00f2fe);
-font-family:Arial;
-color:white;
 
-}
-
-#score{
-
-position:fixed;
-top:10px;
-left:10px;
-font-size:25px;
-font-weight:bold;
+-webkit-user-select:none;
+user-select:none;
 
 }
 
 .minion{
 
-width:120px;
-height:200px;
+width:150px;
+height:240px;
 background:linear-gradient(#ffe259,#ffa751);
-border-radius:60px;
-position:absolute;
+border-radius:80px;
+position:relative;
+box-shadow:0 15px 30px rgba(0,0,0,0.3);
 
 transition:0.3s;
+
+}
+
+/* jump */
+
+.jump{
+
+transform:translateY(-60px);
+
+}
+
+/* strap */
+
+.strap{
+
+position:absolute;
+top:60px;
+width:100%;
+height:15px;
+background:black;
 
 }
 
@@ -44,27 +62,61 @@ transition:0.3s;
 
 .eye{
 
-width:50px;
-height:50px;
+position:absolute;
+top:35px;
+left:45px;
+
+width:60px;
+height:60px;
+
 background:white;
 border-radius:50%;
-border:5px solid gray;
-position:absolute;
-top:30px;
-left:30px;
+border:6px solid gray;
+
 overflow:hidden;
 
 }
 
+/* pupil */
+
 .pupil{
 
-width:15px;
-height:15px;
+position:absolute;
+
+width:20px;
+height:20px;
+
 background:black;
 border-radius:50%;
+
+left:20px;
+top:20px;
+
+transition:0.05s;
+
+}
+
+/* blink */
+
+.blink{
+
+height:5px !important;
+
+}
+
+/* mouth */
+
+.mouth{
+
 position:absolute;
-top:18px;
-left:18px;
+top:120px;
+left:40px;
+
+width:70px;
+height:30px;
+
+border-bottom:5px solid black;
+border-radius:50%;
 
 }
 
@@ -74,28 +126,13 @@ left:18px;
 
 position:absolute;
 bottom:0;
+
 width:100%;
-height:70px;
+height:80px;
+
 background:#2b65ec;
-border-radius:0 0 60px 60px;
 
-}
-
-/* banana */
-
-.banana{
-
-position:absolute;
-font-size:40px;
-cursor:pointer;
-
-}
-
-/* jump */
-
-.jump{
-
-transform:translateY(-50px);
+border-radius:0 0 80px 80px;
 
 }
 
@@ -105,180 +142,183 @@ transform:translateY(-50px);
 
 <body>
 
-<div id="score">Score: 0</div>
-
-<div class="minion" style="left:100px;top:300px">
+<div class="minion">
+<div class="strap"></div>
 <div class="eye"><div class="pupil"></div></div>
+<div class="mouth"></div>
 <div class="pants"></div>
 </div>
 
-<div class="minion" style="left:300px;top:300px">
+
+<div class="minion">
+<div class="strap"></div>
 <div class="eye"><div class="pupil"></div></div>
+<div class="mouth"></div>
 <div class="pants"></div>
 </div>
+
 
 <script>
 
-let score=0
+/* SAFE EYE MOVEMENT */
 
-/* banana spawn */
-
-function spawnBanana(){
-
-let banana=document.createElement("div")
-
-banana.innerHTML="🍌"
-
-banana.className="banana"
-
-banana.style.left=Math.random()*window.innerWidth+"px"
-banana.style.top="0px"
-
-document.body.appendChild(banana)
-
-
-let fall=setInterval(()=>{
-
-banana.style.top=
-
-banana.offsetTop+5+"px"
-
-
-/* catch */
-
-document.querySelectorAll(".minion").forEach(m=>{
-
-if(hit(banana,m)){
-
-score++
-
-document.getElementById("score").innerText="Score: "+score
-
-banana.remove()
-
-clearInterval(fall)
-
-}
-
-})
-
-},30)
-
-
-setTimeout(()=>{
-
-banana.remove()
-
-clearInterval(fall)
-
-},5000)
-
-}
-
-setInterval(spawnBanana,2000)
-
-
-/* collision */
-
-function hit(a,b){
-
-let ar=a.getBoundingClientRect()
-let br=b.getBoundingClientRect()
-
-return !(
-ar.right<br.left ||
-ar.left>br.right ||
-ar.bottom<br.top ||
-ar.top>br.bottom
-)
-
-}
-
-
-/* eye follow */
-
-document.addEventListener("mousemove", e=>{
+function moveEyes(x,y){
 
 document.querySelectorAll(".eye").forEach(eye=>{
 
-let pupil=eye.querySelector(".pupil")
+let pupil = eye.querySelector(".pupil")
 
-let rect=eye.getBoundingClientRect()
+let rect = eye.getBoundingClientRect()
 
-let dx=e.clientX-rect.left-25
-let dy=e.clientY-rect.top-25
+let centerX = rect.width/2
+let centerY = rect.height/2
 
-let angle=Math.atan2(dy,dx)
+let dx = x - rect.left - centerX
+let dy = y - rect.top - centerY
 
-let r=10
+let angle = Math.atan2(dy,dx)
 
-pupil.style.left=25+Math.cos(angle)*r-7+"px"
-pupil.style.top=25+Math.sin(angle)*r-7+"px"
+let radius = 10   /* LIMIT */
+
+let px = centerX + Math.cos(angle)*radius -10
+let py = centerY + Math.sin(angle)*radius -10
+
+pupil.style.left = px+"px"
+pupil.style.top = py+"px"
 
 })
+
+}
+
+
+/* mouse */
+
+document.addEventListener("mousemove", e=>{
+
+moveEyes(e.clientX,e.clientY)
+
+})
+
+
+/* touch */
+
+document.addEventListener("touchmove", e=>{
+
+moveEyes(
+
+e.touches[0].clientX,
+
+e.touches[0].clientY
+
+)
 
 })
 
 
 /* jump */
 
-document.querySelectorAll(".minion").forEach(m=>{
+document.querySelectorAll(".minion").forEach(minion=>{
 
-m.onclick=()=>{
+minion.addEventListener("click", ()=>{
 
-m.classList.add("jump")
+minion.classList.add("jump")
 
 setTimeout(()=>{
 
-m.classList.remove("jump")
+minion.classList.remove("jump")
 
 },300)
 
-}
-
 })
 
-
-/* random walk */
-
-setInterval(()=>{
-
-document.querySelectorAll(".minion").forEach(m=>{
-
-m.style.left=Math.random()*window.innerWidth+"px"
-
 })
-
-},3000)
 
 
 /* drag */
 
 let active=null
 
-document.onmousedown=e=>{
+document.addEventListener("touchstart", e=>{
 
-if(e.target.closest(".minion"))
+if(e.target.closest(".minion")){
 
 active=e.target.closest(".minion")
 
 }
 
-document.onmousemove=e=>{
+})
+
+
+document.addEventListener("touchmove", e=>{
 
 if(active){
 
-active.style.left=e.clientX-60+"px"
-active.style.top=e.clientY-100+"px"
+active.style.position="absolute"
+
+active.style.left=e.touches[0].clientX-75+"px"
+
+active.style.top=e.touches[0].clientY-120+"px"
 
 }
 
-}
+})
 
-document.onmouseup=()=>active=null
 
+document.addEventListener("touchend", ()=>{
+
+active=null
+
+})
+
+
+/* blink */
+
+setInterval(()=>{
+
+document.querySelectorAll(".eye").forEach(eye=>{
+
+eye.classList.add("blink")
+
+setTimeout(()=>{
+
+eye.classList.remove("blink")
+
+},200)
+
+})
+
+},3000)
+
+
+
+/* change color double tap */
+
+document.querySelectorAll(".minion").forEach(minion=>{
+
+minion.addEventListener("dblclick", ()=>{
+
+let colors=[
+
+"linear-gradient(red,yellow)",
+
+"linear-gradient(green,yellow)",
+
+"linear-gradient(purple,pink)",
+
+"linear-gradient(cyan,blue)"
+
+]
+
+minion.style.background=
+
+colors[Math.floor(Math.random()*colors.length)]
+
+})
+
+})
 
 </script>
+
 
 </body>
 </html>
