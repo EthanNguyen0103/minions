@@ -2,71 +2,163 @@
 <html>
 <head>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ULTRA MINIONS</title>
+<title>PRO Safari Minions Kevin & Bob</title>
 
 <style>
 
 body{
 
 margin:0;
+height:100vh;
+background:linear-gradient(#00c6ff,#0072ff);
+
+display:flex;
+justify-content:center;
+align-items:center;
+gap:40px;
+
 overflow:hidden;
-background:linear-gradient(#4facfe,#00f2fe);
-font-family:Arial;
-color:white;
+
+-webkit-user-select:none;
+user-select:none;
 
 }
 
-#score{
 
-position:fixed;
-top:10px;
-left:10px;
-font-size:25px;
-font-weight:bold;
-
-}
+/* ================= */
+/* MINION BASE */
+/* ================= */
 
 .minion{
 
-width:120px;
-height:200px;
+width:150px;
+height:240px;
+
 background:linear-gradient(#ffe259,#ffa751);
-border-radius:60px;
-position:absolute;
+
+border-radius:80px;
+
+position:relative;
+
+box-shadow:0 15px 30px rgba(0,0,0,0.3);
 
 transition:0.3s;
 
 }
 
+
+/* jump */
+
+.jump{
+
+transform:translateY(-60px);
+
+}
+
+
+/* strap */
+
+.strap{
+
+position:absolute;
+top:60px;
+
+width:100%;
+height:15px;
+
+background:black;
+
+}
+
+
 /* eye */
 
 .eye{
 
-width:50px;
-height:50px;
-background:white;
-border-radius:50%;
-border:5px solid gray;
 position:absolute;
-top:30px;
-left:30px;
+
+background:white;
+
+border-radius:50%;
+
+border:6px solid gray;
+
 overflow:hidden;
 
 }
 
-.pupil{
 
-width:15px;
-height:15px;
-background:black;
-border-radius:50%;
-position:absolute;
-top:18px;
-left:18px;
+/* kevin eye */
+
+.kevin .eye{
+
+top:35px;
+left:45px;
+
+width:60px;
+height:60px;
 
 }
+
+
+/* pupil */
+
+.pupil{
+
+position:absolute;
+
+width:20px;
+height:20px;
+
+background:black;
+
+border-radius:50%;
+
+left:20px;
+top:20px;
+
+transition:0.05s;
+
+}
+
+
+/* blink */
+
+.blink{
+
+height:5px !important;
+
+}
+
+
+/* mouth */
+
+.mouth{
+
+position:absolute;
+
+border-bottom:5px solid black;
+
+border-radius:50%;
+
+}
+
+
+/* kevin mouth */
+
+.kevin .mouth{
+
+top:120px;
+left:40px;
+
+width:70px;
+height:30px;
+
+}
+
 
 /* pants */
 
@@ -74,28 +166,66 @@ left:18px;
 
 position:absolute;
 bottom:0;
+
 width:100%;
-height:70px;
+height:80px;
+
 background:#2b65ec;
-border-radius:0 0 60px 60px;
+
+border-radius:0 0 80px 80px;
 
 }
 
-/* banana */
 
-.banana{
 
-position:absolute;
-font-size:40px;
-cursor:pointer;
+/* ================= */
+/* BOB */
+/* ================= */
+
+.bob{
+
+height:200px;
 
 }
 
-/* jump */
 
-.jump{
+/* bob eyes */
 
-transform:translateY(-50px);
+.bob .eye1{
+
+top:40px;
+left:25px;
+
+width:55px;
+height:55px;
+
+}
+
+
+.bob .eye2{
+
+top:50px;
+left:85px;
+
+width:40px;
+height:40px;
+
+}
+
+
+/* bob mouth */
+
+.bob-mouth{
+
+top:110px;
+left:35px;
+
+width:80px;
+height:40px;
+
+border-bottom:6px solid black;
+
+border-radius:0 0 80px 80px;
 
 }
 
@@ -105,180 +235,225 @@ transform:translateY(-50px);
 
 <body>
 
-<div id="score">Score: 0</div>
 
-<div class="minion" style="left:100px;top:300px">
-<div class="eye"><div class="pupil"></div></div>
-<div class="pants"></div>
+<!-- KEVIN -->
+
+<div class="minion kevin">
+
+<div class="strap"></div>
+
+<div class="eye">
+<div class="pupil"></div>
 </div>
 
-<div class="minion" style="left:300px;top:300px">
-<div class="eye"><div class="pupil"></div></div>
+<div class="mouth"></div>
+
 <div class="pants"></div>
+
 </div>
+
+
+
+<!-- BOB -->
+
+<div class="minion bob">
+
+<div class="strap"></div>
+
+<div class="eye eye1">
+<div class="pupil"></div>
+</div>
+
+<div class="eye eye2">
+<div class="pupil"></div>
+</div>
+
+<div class="mouth bob-mouth"></div>
+
+<div class="pants"></div>
+
+</div>
+
+
+
 
 <script>
 
-let score=0
 
-/* banana spawn */
+/* ================= */
+/* EYES FOLLOW */
+/* ================= */
 
-function spawnBanana(){
-
-let banana=document.createElement("div")
-
-banana.innerHTML="🍌"
-
-banana.className="banana"
-
-banana.style.left=Math.random()*window.innerWidth+"px"
-banana.style.top="0px"
-
-document.body.appendChild(banana)
-
-
-let fall=setInterval(()=>{
-
-banana.style.top=
-
-banana.offsetTop+5+"px"
-
-
-/* catch */
-
-document.querySelectorAll(".minion").forEach(m=>{
-
-if(hit(banana,m)){
-
-score++
-
-document.getElementById("score").innerText="Score: "+score
-
-banana.remove()
-
-clearInterval(fall)
-
-}
-
-})
-
-},30)
-
-
-setTimeout(()=>{
-
-banana.remove()
-
-clearInterval(fall)
-
-},5000)
-
-}
-
-setInterval(spawnBanana,2000)
-
-
-/* collision */
-
-function hit(a,b){
-
-let ar=a.getBoundingClientRect()
-let br=b.getBoundingClientRect()
-
-return !(
-ar.right<br.left ||
-ar.left>br.right ||
-ar.bottom<br.top ||
-ar.top>br.bottom
-)
-
-}
-
-
-/* eye follow */
-
-document.addEventListener("mousemove", e=>{
+function moveEyes(x,y){
 
 document.querySelectorAll(".eye").forEach(eye=>{
 
-let pupil=eye.querySelector(".pupil")
+let pupil = eye.querySelector(".pupil")
 
-let rect=eye.getBoundingClientRect()
+let rect = eye.getBoundingClientRect()
 
-let dx=e.clientX-rect.left-25
-let dy=e.clientY-rect.top-25
+let centerX = rect.width/2
+let centerY = rect.height/2
 
-let angle=Math.atan2(dy,dx)
+let dx = x - rect.left - centerX
+let dy = y - rect.top - centerY
 
-let r=10
+let angle = Math.atan2(dy,dx)
 
-pupil.style.left=25+Math.cos(angle)*r-7+"px"
-pupil.style.top=25+Math.sin(angle)*r-7+"px"
+let radius = 10
+
+let px = centerX + Math.cos(angle)*radius -10
+let py = centerY + Math.sin(angle)*radius -10
+
+pupil.style.left = px+"px"
+pupil.style.top = py+"px"
 
 })
 
+}
+
+
+/* mouse */
+
+document.addEventListener("mousemove", e=>{
+
+moveEyes(e.clientX,e.clientY)
+
 })
 
 
-/* jump */
+/* touch */
 
-document.querySelectorAll(".minion").forEach(m=>{
+document.addEventListener("touchmove", e=>{
 
-m.onclick=()=>{
+moveEyes(
 
-m.classList.add("jump")
+e.touches[0].clientX,
+
+e.touches[0].clientY
+
+)
+
+})
+
+
+
+/* ================= */
+/* JUMP */
+/* ================= */
+
+document.querySelectorAll(".minion").forEach(minion=>{
+
+minion.addEventListener("click", ()=>{
+
+minion.classList.add("jump")
 
 setTimeout(()=>{
 
-m.classList.remove("jump")
+minion.classList.remove("jump")
 
 },300)
+
+})
+
+})
+
+
+
+/* ================= */
+/* DRAG SAFARI */
+/* ================= */
+
+let active=null
+
+
+document.addEventListener("touchstart", e=>{
+
+if(e.target.closest(".minion")){
+
+active=e.target.closest(".minion")
 
 }
 
 })
 
 
-/* random walk */
+document.addEventListener("touchmove", e=>{
+
+if(active){
+
+active.style.position="absolute"
+
+active.style.left=e.touches[0].clientX-75+"px"
+
+active.style.top=e.touches[0].clientY-120+"px"
+
+}
+
+})
+
+
+document.addEventListener("touchend", ()=>{
+
+active=null
+
+})
+
+
+
+/* ================= */
+/* BLINK */
+/* ================= */
 
 setInterval(()=>{
 
-document.querySelectorAll(".minion").forEach(m=>{
+document.querySelectorAll(".eye").forEach(eye=>{
 
-m.style.left=Math.random()*window.innerWidth+"px"
+eye.classList.add("blink")
+
+setTimeout(()=>{
+
+eye.classList.remove("blink")
+
+},200)
 
 })
 
 },3000)
 
 
-/* drag */
 
-let active=null
+/* ================= */
+/* CHANGE COLOR */
+/* ================= */
 
-document.onmousedown=e=>{
+document.querySelectorAll(".minion").forEach(minion=>{
 
-if(e.target.closest(".minion"))
+minion.addEventListener("dblclick", ()=>{
 
-active=e.target.closest(".minion")
+let colors=[
 
-}
+"linear-gradient(red,yellow)",
 
-document.onmousemove=e=>{
+"linear-gradient(green,yellow)",
 
-if(active){
+"linear-gradient(purple,pink)",
 
-active.style.left=e.clientX-60+"px"
-active.style.top=e.clientY-100+"px"
+"linear-gradient(cyan,blue)"
 
-}
+]
 
-}
+minion.style.background=
 
-document.onmouseup=()=>active=null
+colors[Math.floor(Math.random()*colors.length)]
+
+})
+
+})
 
 
 </script>
+
 
 </body>
 </html>
